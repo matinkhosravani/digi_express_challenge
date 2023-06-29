@@ -22,9 +22,14 @@ type CoverageArea struct {
 
 type PartnerRepository interface {
 	Store(*Partner) error
+	GetByID(ID uint) (*Partner, error)
 }
 
 type PartnerStoreUsecase interface {
 	Validation(c *gin.Context) (*Partner, error)
 	Store(partner *Partner) error
+}
+
+type PartnerLoadUsecase interface {
+	GetPartnerById(ID uint) (*Partner, error)
 }

@@ -27,3 +27,15 @@ func (uc *PartnerStoreUsecase) Store(partner *domain.Partner) error {
 
 	return nil
 }
+
+type PartnerLoadUsecase struct {
+	GetPartnerByIdFn func(ID uint) (*domain.Partner, error)
+}
+
+func (p *PartnerLoadUsecase) GetPartnerById(ID uint) (*domain.Partner, error) {
+	if p != nil && p.GetPartnerByIdFn != nil {
+		return p.GetPartnerByIdFn(ID)
+	}
+
+	return &domain.Partner{}, nil
+}

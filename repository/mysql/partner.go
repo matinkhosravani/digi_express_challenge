@@ -4,12 +4,29 @@ import (
 	"fmt"
 	"github.com/matinkhosravani/digi_express_challenge/domain"
 	"gorm.io/gorm"
-	"strings"
 	"time"
 )
 
 type PartnerRepository struct {
 	DB *gorm.DB
+}
+
+func (pr *PartnerRepository) GetByID(ID uint) (*domain.Partner, error) {
+	var p partner
+	res := pr.DB.Where("partners.id = ?", ID).
+		Joins("JOIN addresses ON addresses.id = partners.address_id").Preload("Address").
+		Joins("JOIN coverage_areas ON coverage_areas.id = partners.coverage_area_id").Preload("CoverageArea").
+		First(&p)
+
+	if err := res.Error; err != nil {
+		return nil, err
+	}
+	var pDomain domain.Partner
+	if res.RowsAffected <= 0 {
+		return nil, fmt.Errorf("no such user; id : %d", ID)
+	}
+	p.toDomain(&pDomain)
+	return &pDomain, nil
 }
 
 func (pr *PartnerRepository) Store(domainP *domain.Partner) error {
@@ -21,17 +38,17 @@ func (pr *PartnerRepository) Store(domainP *domain.Partner) error {
 		if err != nil {
 			return err
 		}
-		p.AddressId = p.address.ID
+		p.AddressID = p.Address.ID
 		err = insertCoverageArea(tx, &p)
 		if err != nil {
 			return err
 		}
-		p.CoverageAreaId = p.coverageArea.ID
+		p.CoverageAreaID = p.CoverageArea.ID
 		err = tx.Create(&p).Error
 		if err != nil {
 			return err
 		}
-		
+
 		return nil
 	})
 
@@ -45,24 +62,17 @@ func (pr *PartnerRepository) Store(domainP *domain.Partner) error {
 }
 
 func insertCoverageArea(tx *gorm.DB, p *partner) error {
-	p.coverageArea.CreatedAt = time.Now()
-	p.coverageArea.UpdatedAt = time.Now()
-	p.coverageArea.DeletedAt = gorm.DeletedAt{
+	p.CoverageArea.CreatedAt = time.Now()
+	p.CoverageArea.UpdatedAt = time.Now()
+	p.CoverageArea.DeletedAt = gorm.DeletedAt{
 		Time:  time.Time{},
 		Valid: false,
 	}
 	err := tx.Transaction(func(tx *gorm.DB) error {
-		err := tx.Exec(`INSERT INTO coverage_areas (created_at,updated_at,deleted_at,type, coordinates)
-VALUES (?,?,?,?,  ST_GeomFromText(?));`, p.coverageArea.CreatedAt, p.coverageArea.UpdatedAt, p.coverageArea.DeletedAt, p.coverageArea.Type, generateMultiPolygon(p.coverageArea.Coordinates)).Error
+		err := tx.Create(&p.CoverageArea).Error
 		if err != nil {
 			return err
 		}
-		var insertedID int64
-		tx.Raw("SELECT LAST_INSERT_ID()").Row().Scan(&insertedID)
-		if err != nil {
-			return err
-		}
-		p.coverageArea.ID = uint(insertedID)
 		return nil
 	})
 
@@ -70,45 +80,20 @@ VALUES (?,?,?,?,  ST_GeomFromText(?));`, p.coverageArea.CreatedAt, p.coverageAre
 }
 
 func insertAddress(tx *gorm.DB, p *partner) error {
-	p.address.CreatedAt = time.Now()
-	p.address.UpdatedAt = time.Now()
-	p.address.DeletedAt = gorm.DeletedAt{
+	p.Address.CreatedAt = time.Now()
+	p.Address.UpdatedAt = time.Now()
+	p.Address.DeletedAt = gorm.DeletedAt{
 		Time:  time.Time{},
 		Valid: false,
 	}
 	err := tx.Transaction(func(tx *gorm.DB) error {
-		err := tx.Exec(`INSERT INTO addresses (created_at,updated_at,deleted_at,type,coordinates)
-VALUES (?,?,NULL,?,POINT(?, ?))`, p.address.CreatedAt, p.address.UpdatedAt, p.address.Type, p.address.Coordinates[0], p.address.Coordinates[1]).Error
+		err := tx.Create(&p.Address).Error
 		if err != nil {
 			return err
 		}
-		var insertedID int64
-		tx.Raw("SELECT LAST_INSERT_ID()").Row().Scan(&insertedID)
-		if err != nil {
-			return err
-		}
-		p.address.ID = uint(insertedID)
-
 		return nil
 	})
 
 	return err
 }
 
-func generateMultiPolygon(coordinates [][][][]float64) string {
-	result := "MULTIPOLYGON("
-	for _, polygon := range coordinates {
-		result += "("
-		for _, ring := range polygon {
-			result += "("
-			for _, point := range ring {
-				result += fmt.Sprintf("%.6f %.6f,", point[0], point[1])
-			}
-			result = strings.TrimSuffix(result, ",") + "),"
-		}
-		result = strings.TrimSuffix(result, ",") + "),"
-	}
-	result = strings.TrimSuffix(result, ",") + ")"
-
-	return result
-}
