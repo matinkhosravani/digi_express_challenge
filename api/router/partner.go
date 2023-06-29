@@ -12,7 +12,9 @@ func PartnerRoutes(r *gin.RouterGroup) {
 	pr := repository.NewPartnerRepository()
 	h := handler.Partner{
 		StoreUsecase: usecase.NewPartnerStore(pr),
+		LoadUsecase:  usecase.NewPartnerLoad(pr),
 	}
 
 	partners.POST("", h.Store)
+	partners.GET(":id", h.LoadByID)
 }
