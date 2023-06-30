@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  go:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8888:8080
+    depends_on:
+      - mysql
+    volumes:
+      - .:/app
+      - go-modules:/go/pkg/mod
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+      - 8081:80
+    environment:
+      PMA_HOST: mysql
+
+volumes:
+  mysql-data:
+  go-modules:
+
