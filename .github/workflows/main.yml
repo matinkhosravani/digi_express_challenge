@@ -13,7 +13,7 @@ env:
   MYSQL_ROOT_PASSWORD: 123456
   MYSQL_DATABASE: digiexp_test
   DB_TYPE: mysql
-  DB_HOST: mysql
+  DB_HOST: 127.0.0.1
   DB_PORT: 3306
   DB_USER: root
   DB_PASS: 123456
@@ -28,6 +28,9 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_PASSWORD }}
           MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        ports:
+          - 3306:3306
 
     steps:
       - name: Checkout repository
@@ -43,9 +46,14 @@ jobs:
 
       - name: Vet code
         run: go vet $(go list ./... | grep -v /vendor/)
-
+      - name: Change testing.env
+        run: |
+          sed -i "s/DB_HOST=.*/DB_HOST=127.0.0.1/" ./testing.env
+          sed -i "s/DB_NAME=.*/DB_NAME=${MYSQL_DATABASE}/" ./testing.env
+          sed -i "s/DB_PASS=.*/DB_PASS=${MYSQL_ROOT_PASSWORD}/" ./testing.env
       - name: Run tests
-        run: go test -race $(go list ./... | grep -v /vendor/)
+        run: |
+          go test -race $(go list ./... | grep -v /vendor/)
 
   build:
     runs-on: ubuntu-latest
