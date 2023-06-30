@@ -52,3 +52,23 @@ func (h *Partner) LoadByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, partner)
 }
+
+func (h *Partner) Search(c *gin.Context) {
+	request, err := h.SearchUsecase.Validation(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	partner, err := h.SearchUsecase.SearchPartners(request.X, request.Y, 1)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, partner)
+}
