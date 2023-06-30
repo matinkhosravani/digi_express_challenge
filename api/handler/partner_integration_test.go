@@ -22,7 +22,7 @@ func TestIntegrationPartner_StorePartner(t *testing.T) {
 
 	//happy path
 	t.Run("User can store valid partner into database", func(t *testing.T) {
-		pr.Empty()
+		_ = pr.Empty()
 		p := factory.NewDefaultPartnerFactory(pr).Get()
 		w := storePartner(uc, p)
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -37,7 +37,7 @@ func TestIntegrationPartner_StorePartner(t *testing.T) {
 	})
 
 	t.Run("User cant store a partner with duplicate document", func(t *testing.T) {
-		pr.Empty()
+		_ = pr.Empty()
 		//store a partner in database
 		p := factory.NewDefaultPartnerFactory(pr).Build()
 		p2 := factory.NewDefaultPartnerFactory(pr).
@@ -58,7 +58,7 @@ func TestIntegrationPartner_LoadPartner(t *testing.T) {
 
 	//happy path
 	t.Run("User loads a partner with id", func(t *testing.T) {
-		pr.Empty()
+		_ = pr.Empty()
 		p := factory.NewDefaultPartnerFactory(pr).Build()
 		w := loadPartner(uc, p)
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -73,7 +73,7 @@ func TestIntegrationPartner_LoadPartner(t *testing.T) {
 	})
 	//happy path
 	t.Run("User gets error when loading a partner that does not exist in database", func(t *testing.T) {
-		pr.Empty()
+		_ = pr.Empty()
 		h := &Partner{
 			LoadUsecase: uc,
 		}
@@ -116,7 +116,7 @@ func TestIntegrationPartner_SearchPartner(t *testing.T) {
 	uc := usecase.NewPartnerSearch(pr)
 	//happy path
 	t.Run("User search partner with Point", func(t *testing.T) {
-		pr.Empty()
+		_ = pr.Empty()
 		partner1 := factory.NewDefaultPartnerFactory(pr).
 			WithCoverageArea(domain.CoverageArea{
 				Type: "MULTIPOLYGON",
@@ -172,7 +172,7 @@ func TestIntegrationPartner_SearchPartner(t *testing.T) {
 	})
 
 	t.Run("Search partner does not get a partner which is close to parcel but parcel is not in his coverage area", func(t *testing.T) {
-		pr.Empty()
+		_ = pr.Empty()
 		_ = factory.NewDefaultPartnerFactory(pr).
 			WithCoverageArea(domain.CoverageArea{
 				Type: "MULTIPOLYGON",
@@ -205,7 +205,7 @@ func TestIntegrationPartner_SearchPartner(t *testing.T) {
 		assert.Equal(t, 0, len(responsePartner))
 	})
 	t.Run("Search partner does not get a partner when parcel is on the edge of coverage area", func(t *testing.T) {
-		pr.Empty()
+		_ = pr.Empty()
 		_ = factory.NewDefaultPartnerFactory(pr).
 			WithCoverageArea(domain.CoverageArea{
 				Type: "MULTIPOLYGON",
