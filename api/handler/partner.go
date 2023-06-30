@@ -8,8 +8,9 @@ import (
 )
 
 type Partner struct {
-	StoreUsecase domain.PartnerStoreUsecase
-	LoadUsecase  domain.PartnerLoadUsecase
+	StoreUsecase  domain.PartnerStoreUsecase
+	LoadUsecase   domain.PartnerLoadUsecase
+	SearchUsecase domain.PartnerSearchUsecase
 }
 
 func (h *Partner) Store(c *gin.Context) {
@@ -45,6 +46,26 @@ func (h *Partner) LoadByID(c *gin.Context) {
 	partner, err := h.LoadUsecase.GetPartnerById(uint(id))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, partner)
+}
+
+func (h *Partner) Search(c *gin.Context) {
+	request, err := h.SearchUsecase.Validation(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	partner, err := h.SearchUsecase.SearchPartners(request.X, request.Y, 1)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": err.Error(),
 		})
 		return

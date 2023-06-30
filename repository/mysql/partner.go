@@ -11,6 +11,34 @@ type PartnerRepository struct {
 	DB *gorm.DB
 }
 
+func (pr *PartnerRepository) SearchPartners(x, y float64, limit int) ([]*domain.Partner, error) {
+	var ps []partner
+	point := fmt.Sprintf("POINT(%v,%v)", x, y)
+	err := pr.DB.Table("partners").
+		Select("partners.*").
+		Joins("JOIN coverage_areas ca ON partners.coverage_area_id = ca.id").
+		Joins("JOIN addresses a ON a.id = partners.address_id").Preload("Address").
+		Where(fmt.Sprintf("ST_Within(%s, ca.coordinates)", point)).
+		Order(fmt.Sprintf("ST_Distance(%s, a.coordinates)", point)).
+		Limit(limit).
+		Preload("CoverageArea").
+		Preload("Address").
+		Find(&ps).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	domainPs := make([]*domain.Partner, 0, len(ps))
+	for _, p := range ps {
+		var domainP domain.Partner
+		p.toDomain(&domainP)
+		domainPs = append(domainPs, &domainP)
+	}
+
+	return domainPs, nil
+}
+
 func (pr *PartnerRepository) GetByID(ID uint) (*domain.Partner, error) {
 	var p partner
 	res := pr.DB.Where("partners.id = ?", ID).
@@ -96,4 +124,3 @@ func insertAddress(tx *gorm.DB, p *partner) error {
 
 	return err
 }
-

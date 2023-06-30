@@ -23,6 +23,7 @@ type CoverageArea struct {
 type PartnerRepository interface {
 	Store(*Partner) error
 	GetByID(ID uint) (*Partner, error)
+	SearchPartners(x, y float64, limit int) ([]*Partner, error)
 }
 
 type PartnerStoreUsecase interface {
@@ -32,4 +33,14 @@ type PartnerStoreUsecase interface {
 
 type PartnerLoadUsecase interface {
 	GetPartnerById(ID uint) (*Partner, error)
+}
+
+type PartnerSearchUsecase interface {
+	Validation(c *gin.Context) (*PartnerSearchRequest, error)
+	SearchPartners(x, y float64, limit int) ([]*Partner, error)
+}
+
+type PartnerSearchRequest struct {
+	X float64 `form:"x" binding:"required,latitude"`
+	Y float64 `form:"y" binding:"required,longitude"`
 }

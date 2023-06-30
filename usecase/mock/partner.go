@@ -39,3 +39,24 @@ func (p *PartnerLoadUsecase) GetPartnerById(ID uint) (*domain.Partner, error) {
 
 	return &domain.Partner{}, nil
 }
+
+type PartnerSearchUsecase struct {
+	SearchPartnersFn func(x, y float64, limit int) ([]*domain.Partner, error)
+	ValidationFn     func(c *gin.Context) (*domain.PartnerSearchRequest, error)
+}
+
+func (p *PartnerSearchUsecase) Validation(c *gin.Context) (*domain.PartnerSearchRequest, error) {
+	if p != nil && p.ValidationFn != nil {
+		return p.ValidationFn(c)
+	}
+
+	return &domain.PartnerSearchRequest{}, nil
+}
+
+func (p *PartnerSearchUsecase) SearchPartners(x, y float64, limit int) ([]*domain.Partner, error) {
+	if p != nil && p.SearchPartnersFn != nil {
+		return p.SearchPartnersFn(x, y, limit)
+	}
+
+	return []*domain.Partner{{}}, nil
+}
