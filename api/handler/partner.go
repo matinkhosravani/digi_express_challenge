@@ -8,8 +8,9 @@ import (
 )
 
 type Partner struct {
-	StoreUsecase domain.PartnerStoreUsecase
-	LoadUsecase  domain.PartnerLoadUsecase
+	StoreUsecase  domain.PartnerStoreUsecase
+	LoadUsecase   domain.PartnerLoadUsecase
+	SearchUsecase domain.PartnerSearchUsecase
 }
 
 func (h *Partner) Store(c *gin.Context) {

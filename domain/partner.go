@@ -23,6 +23,7 @@ type CoverageArea struct {
 type PartnerRepository interface {
 	Store(*Partner) error
 	GetByID(ID uint) (*Partner, error)
+	SearchPartners(x, y float64, limit int) ([]*Partner, error)
 }
 
 type PartnerStoreUsecase interface {
