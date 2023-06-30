@@ -3,6 +3,8 @@ package app
 import (
 	"github.com/spf13/viper"
 	"log"
+	"path/filepath"
+	"runtime"
 )
 
 type Env struct {
@@ -15,9 +17,15 @@ type Env struct {
 	DBName        string `mapstructure:"DB_NAME"`
 }
 
-func NewEnv() *Env {
+func NewEnv(isTestEnv bool) *Env {
 	env := Env{}
-	viper.SetConfigFile(".env")
+	if isTestEnv {
+		_, filename, _, _ := runtime.Caller(1)
+		dir := filepath.Dir(filename)
+		viper.SetConfigFile(dir + "/../testing.env")
+	} else {
+		viper.SetConfigFile(".env")
+	}
 
 	err := viper.ReadInConfig()
 	if err != nil {

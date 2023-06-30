@@ -11,6 +11,27 @@ type PartnerRepository struct {
 	DB *gorm.DB
 }
 
+func (pr *PartnerRepository) Empty() error {
+	err := pr.DB.Exec("drop Table partners").Error
+	if err != nil {
+		return err
+	}
+	err = pr.DB.Exec("TRUNCATE Table coverage_areas").Error
+	if err != nil {
+		return err
+	}
+	err = pr.DB.Exec("Truncate Table addresses").Error
+	if err != nil {
+		return err
+	}
+
+	err = pr.DB.AutoMigrate(&partner{})
+	if err != nil {
+		return err
+	}
+	return err
+}
+
 func (pr *PartnerRepository) SearchPartners(x, y float64, limit int) ([]*domain.Partner, error) {
 	var ps []partner
 	point := fmt.Sprintf("POINT(%v,%v)", x, y)

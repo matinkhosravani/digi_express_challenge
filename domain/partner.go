@@ -1,6 +1,8 @@
 package domain
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 type Partner struct {
 	ID           uint         `json:"id"`
@@ -20,7 +22,12 @@ type CoverageArea struct {
 	Coordinates [][][][]float64 `json:"coordinates"`
 }
 
+type Repository interface {
+	Empty() error
+}
+
 type PartnerRepository interface {
+	Repository
 	Store(*Partner) error
 	GetByID(ID uint) (*Partner, error)
 	SearchPartners(x, y float64, limit int) ([]*Partner, error)

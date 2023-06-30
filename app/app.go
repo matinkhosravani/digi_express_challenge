@@ -7,7 +7,11 @@ type Application struct {
 var app Application
 
 func Boot() {
-	app.Env = NewEnv()
+	app.Env = NewEnv(false)
+}
+
+func BootTestApp() {
+	app.Env = NewEnv(true)
 }
 
 func GetEnv() *Env {
