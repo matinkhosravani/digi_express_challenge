@@ -1,0 +1,73 @@
+version: 2.1
+
+executors:
+  go-executor:
+    docker:
+      - image: circleci/golang:1.16
+
+jobs:
+  test:
+    executor: go-executor
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: digiexp_test
+      DB_TYPE: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASS: 123456
+      DB_NAME: digiexp_test
+    steps:
+      - checkout
+      - run:
+          name: Set up Go
+          command: |
+            go get github.com/swaggo/swag/cmd/swag@latest
+
+      - run:
+          name: Generate Swagger docs
+          command: swag init -g cmd/main.go
+
+      - run:
+          name: Format code
+          command: go fmt $(go list ./... | grep -v /vendor/)
+
+      - run:
+          name: Vet code
+          command: go vet $(go list ./... | grep -v /vendor/)
+
+      - run:
+          name: Change testing.env
+          command: |
+            sed -i "s/DB_HOST=.*/DB_HOST=127.0.0.1/" ./testing.env
+            sed -i "s/DB_NAME=.*/DB_NAME=${MYSQL_DATABASE}/" ./testing.env
+            sed -i "s/DB_PASS=.*/DB_PASS=${MYSQL_ROOT_PASSWORD}/" ./testing.env
+
+      - run:
+          name: Run tests
+          command: |
+            go mod tidy
+            go test -race $(go list ./... | grep -v /vendor/)
+
+  build:
+    executor: go-executor
+    steps:
+      - checkout
+      - run:
+          name: Set up Go
+          command: |
+            go get github.com/swaggo/swag/cmd/swag@latest
+
+      - run:
+          name: Generate Swagger docs
+          command: swag init -g cmd/main.go
+
+      - run:
+          name: Build
+          command: |
+            mkdir -p __bin__/${CIRCLE_PROJECT_REPONAME}
+            go build -o __bin__/${CIRCLE_PROJECT_REPONAME} ./...
+
+      - store_artifacts:
+          path: __bin__/${CIRCLE_PROJECT_REPONAME}
+          destination: built-artifact
