@@ -58,9 +58,7 @@ jobs:
           sed -i "s/DB_NAME=.*/DB_NAME=${MYSQL_DATABASE}/" ./testing.env
           sed -i "s/DB_PASS=.*/DB_PASS=${MYSQL_ROOT_PASSWORD}/" ./testing.env
       - name: Run tests
-        needs: Install swag
         run: |
-          go mod tidy
           go test -race $(go list ./... | grep -v /vendor/)
 
   build:
