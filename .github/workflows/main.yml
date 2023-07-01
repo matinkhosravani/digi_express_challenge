@@ -45,7 +45,7 @@ jobs:
         run: go install github.com/swaggo/swag/cmd/swag@latest
 
       - name: Generate Swagger docs
-        run: $GOPATH/bin/swag init -g cmd/main.go
+        run: swag init -g cmd/main.go
 
       - name: Format code
         run: go fmt $(go list ./... | grep -v /vendor/)
@@ -77,7 +77,7 @@ jobs:
         run: go install github.com/swaggo/swag/cmd/swag@latest
 
       - name: Generate Swagger docs
-        run: $GOPATH/bin/swag init -g cmd/main.go
+        run: swag init -g cmd/main.go
 
       - name: Build
         run: |
