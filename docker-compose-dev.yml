@@ -8,7 +8,9 @@ services:
       - 8888:8080
     depends_on:
       - mysql
-    restart: on-failure
+    volumes:
+      - .:/app
+      - go-modules:/go/pkg/mod
 
   mysql:
     image: mysql:latest
@@ -17,6 +19,14 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
 
+  phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+      - 8081:80
+    environment:
+      PMA_HOST: mysql
+
 volumes:
   mysql-data:
+  go-modules:
 
