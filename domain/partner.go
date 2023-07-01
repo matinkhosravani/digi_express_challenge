@@ -5,20 +5,20 @@ import (
 )
 
 type Partner struct {
-	ID           uint         `json:"id"`
-	TradingName  string       `json:"tradingName"`
-	OwnerName    string       `json:"ownerName"`
-	Document     string       `json:"document"`
+	ID           uint         `json:"id" swaggerignore:"true"`
+	TradingName  string       `json:"tradingName" example:"Adega da Cerveja - Pinheiros"`
+	OwnerName    string       `json:"ownerName" example:"Zé da Silva"`
+	Document     string       `json:"document" example:"1432132123891/0001"`
 	CoverageArea CoverageArea `json:"coverageArea"`
 	Address      Address      `json:"address"`
 }
 type Address struct {
-	Type        string    `json:"type"`
+	Type        string    `json:"type" example:"Point"`
 	Coordinates []float64 `json:"coordinates"`
 }
 
 type CoverageArea struct {
-	Type        string          `json:"type"`
+	Type        string          `json:"type" example:"MultiPolygon"`
 	Coordinates [][][][]float64 `json:"coordinates"`
 }
 
