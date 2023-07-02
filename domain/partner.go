@@ -6,20 +6,20 @@ import (
 
 type Partner struct {
 	ID           uint         `json:"id" swaggerignore:"true"`
-	TradingName  string       `json:"tradingName" example:"Adega da Cerveja - Pinheiros"`
-	OwnerName    string       `json:"ownerName" example:"Zé da Silva"`
-	Document     string       `json:"document" example:"1432132123891/0001"`
-	CoverageArea CoverageArea `json:"coverageArea"`
-	Address      Address      `json:"address"`
+	TradingName  string       `json:"tradingName" binding:"required" example:"Adega da Cerveja - Pinheiros"`
+	OwnerName    string       `json:"ownerName" binding:"required" example:"Zé da Silva"`
+	Document     string       `json:"document" binding:"required"  example:"1432132123891/0001"`
+	CoverageArea CoverageArea `json:"coverageArea" binding:"required" `
+	Address      Address      `json:"address" binding:"required" `
 }
 type Address struct {
-	Type        string    `json:"type" example:"Point"`
-	Coordinates []float64 `json:"coordinates"`
+	Type        string    `json:"type"  binding:"required"  example:"Point"`
+	Coordinates []float64 `json:"coordinates" binding:"required" `
 }
 
 type CoverageArea struct {
-	Type        string          `json:"type" example:"MultiPolygon"`
-	Coordinates [][][][]float64 `json:"coordinates"`
+	Type        string          `json:"type" binding:"required"  example:"MultiPolygon"`
+	Coordinates [][][][]float64 `json:"coordinates" binding:"required" `
 }
 
 type Repository interface {
