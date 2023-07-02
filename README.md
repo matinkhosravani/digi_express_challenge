@@ -47,3 +47,16 @@ The project follows Uncle Bob's clean architecture principles and consists of th
 All layers are designed to be interchangeable. For example, you can easily replace the `mysqlRepository` with `MongoRepository`, which implements the Partner Repository. Additionally, in tests, you can use a mock usecase for better testability.
 
 Note: The Delivery layer has not been abstracted for the sake of simplicity.
+
+## Performance
+```
+Running 10s test @ http://localhost:8888/api/v1/partners
+  80 goroutine(s) running concurrently
+40607 requests in 9.99570494s, 36.73MB read
+Requests/sec:		4062.44
+Transfer/sec:		3.67MB
+Avg Req Time:		19.692575ms
+Fastest Request:	2.424881ms
+Slowest Request:	141.282541ms
+Number of Errors:	0
+```
