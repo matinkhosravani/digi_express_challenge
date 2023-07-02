@@ -40,7 +40,7 @@ else
 fi
 
 # Step 6: dockeer-compose up
-docker-compose up -d
+docker-compose up -d --build
 
 echo "Server is running at port 8888"
 

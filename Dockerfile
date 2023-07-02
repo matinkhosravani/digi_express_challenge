@@ -8,5 +8,5 @@ ENV GOMODCACHE /go/pkg/mod
 
 WORKDIR "$APP_HOME"
 RUN $GOPATH/bin/swag init -g ./cmd/main.go
-RUN go build ./cmd/main.go
+RUN go build -v ./cmd/main.go
 ENTRYPOINT "./main"
