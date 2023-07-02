@@ -83,9 +83,3 @@ jobs:
         run: |
           mkdir -p ${{ env.OUTPUT_NAME }}
           go build -o ${{ env.OUTPUT_NAME }} ./...
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: built-artifact
-          path: ${{ env.OUTPUT_NAME }}
