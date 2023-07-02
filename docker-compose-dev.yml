@@ -3,7 +3,7 @@ services:
   go:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-dev
     ports:
       - 8888:8080
     depends_on:
