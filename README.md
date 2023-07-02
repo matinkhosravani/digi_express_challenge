@@ -1,3 +1,4 @@
+[![CI](https://github.com/matinkhosravani/digi_express_challenge/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/matinkhosravani/digi_express_challenge/actions/workflows/main.yml)
 
 
 # Digi-express Back-end Challenge
