@@ -14,7 +14,7 @@ type PartnerFactory struct {
 // NewDefaultPartnerFactory Returning Pointer to struct for chaining methods
 // it's kinda a form of Builder pattern
 func NewDefaultPartnerFactory(partnerRepo domain.PartnerRepository) *PartnerFactory {
-	bf := &PartnerFactory{
+	pf := &PartnerFactory{
 		partnerRepo: partnerRepo,
 		partner: &domain.Partner{
 			ID:          1,
@@ -42,7 +42,7 @@ func NewDefaultPartnerFactory(partnerRepo domain.PartnerRepository) *PartnerFact
 		},
 	}
 
-	return bf
+	return pf
 }
 func (pf *PartnerFactory) WithID(id uint) *PartnerFactory {
 	pf.partner.ID = id

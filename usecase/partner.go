@@ -12,6 +12,7 @@ type PartnerStore struct {
 type PartnerLoad struct {
 	partnerRepo domain.PartnerRepository
 }
+
 type PartnerSearch struct {
 	partnerRepo domain.PartnerRepository
 }

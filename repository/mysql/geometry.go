@@ -116,7 +116,7 @@ func generateMultiPolygon(coordinates [][][][]float64) string {
 		for _, ring := range polygon {
 			result += "("
 			for _, point := range ring {
-				result += fmt.Sprintf("%.6f %.6f,", point[0], point[1])
+				result += fmt.Sprintf("%.20f %.20f,", point[0], point[1])
 			}
 			result = strings.TrimSuffix(result, ",") + "),"
 		}

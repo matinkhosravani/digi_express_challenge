@@ -45,7 +45,7 @@ func (h *Partner) Store(c *gin.Context) {
 // LoadByID is the handler function for checking if a username is taken.
 // @Summary Load a partner
 // @Description Load a partner with the id in the url
-// @ID partner-laod
+// @ID partner-load
 // @Produce json
 // @Param id path int true "id of partner"
 // @Success 200 {object} domain.Partner
